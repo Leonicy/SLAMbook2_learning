@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/leonicy/SLAM2.0/slambook2/ch5/rgbd/joinMap.cpp
+iostream
+-
+fstream
+-
+opencv2/opencv.hpp
+-
+boost/format.hpp
+-
+pangolin/pangolin.h
+-
+sophus/se3.hpp
+-
+

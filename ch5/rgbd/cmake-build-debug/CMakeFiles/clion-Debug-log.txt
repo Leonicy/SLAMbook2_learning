@@ -1,0 +1,10 @@
+/home/leonicy/Downloads/CLion-2023.3.1/clion-2023.3.1/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/leonicy/Downloads/CLion-2023.3.1/clion-2023.3.1/bin/ninja/linux/x64/ninja -G Ninja -S /home/leonicy/SLAM2.0/slambook2/ch5/rgbd -B /home/leonicy/SLAM2.0/slambook2/ch5/rgbd/cmake-build-debug
+CMake Warning (dev) at CMakeLists.txt:14 (project):
+  cmake_minimum_required() should be called prior to this top-level project()
+  call.  Please see the cmake-commands(7) manual for usage documentation of
+  both commands.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/leonicy/SLAM2.0/slambook2/ch5/rgbd/cmake-build-debug
