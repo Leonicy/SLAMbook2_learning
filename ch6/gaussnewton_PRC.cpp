@@ -6,15 +6,25 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <chrono>
+#include <cmath>
 
 using namespace std;
 using namespace Eigen;
+
+double func_R(double xr,double ar,double br,double cr) {
+    return exp(ar*xr*xr+br*xr+cr);
+}
+
+double func_E(double xe,double ae,double be,double ce){
+    return std::exp(ae*ae*xe+be*xe+ce);
+}
 
 int main(int argc, char **argv) {
     double ar = 1.0, br = 2.0, cr = 1.0;         // 真实参数值
     double ae = 2.0, be = -1.0, ce = 5.0;        // 估计参数值
     int N = 100;                                 // 数据点
     double w_sigma = 1.0;                        // 噪声Sigma值
+    double inv_sigma=1.0/w_sigma;
     cv::RNG rng;                                 // OpenCV随机数产生器
 
     vector<double> x_data, y_data;      // 数据
@@ -49,6 +59,9 @@ int main(int argc, char **argv) {
 
             H += J * J.transpose(); // GN近似的H 3*3
             b += -error * J; //列向量
+
+//            H += inv_sigma * inv_sigma * J * J.transpose();//和自己写的不一样
+//            b += -inv_sigma * inv_sigma * error * J;//和自己写的不一样
             // end your code here
 
             cost += error * error;
@@ -85,5 +98,60 @@ int main(int argc, char **argv) {
     chrono::duration<double> time_used = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
     cout << "solve time cost = " << time_used.count() << " seconds. " << endl;
     cout << "estimated abc = " << ae << ", " << be << ", " << ce << endl;
+
+    //将数据输入txt
+    FILE *dataFile= fopen("data.txt","w");//创建文件流
+    if(!dataFile){
+        fprintf(stderr,"error opening data.txt");
+        return 1;
+    }
+
+    for(int d=0;d<N;d++){
+        fprintf(dataFile,"%f\t%f\n",x_data[d],y_data[d]);
+        //将数据以浮点数\t浮点数\n的形式输入txt
+    }
+    fclose(dataFile);//关闭文件流
+
+    //输出真实函数数据
+    FILE *dataFile_func_R= fopen("data_r","w");
+    if(!dataFile_func_R){
+        fprintf(stderr,"error opening data_r.txt");
+        return 1;
+    }
+    for(int ir=0;ir<1000;ir++){
+        double xr=ir/1000;
+        double yr=func_R(xr,ar,br,cr);
+        fprintf(dataFile_func_R,"%f\t%f\n",xr,yr);
+    }
+    fclose(dataFile_func_R);
+
+    //输出拟合函数数据
+    FILE *dataFile_func_E= fopen("data_e","w");
+    if(!dataFile_func_E){
+        fprintf(stderr,"error opening data_e.txt");
+        return 1;
+    }
+    for(int ie=0;ie<1000;ie++){
+        double xe=ie/1000;
+        double ye=func_E(xe,ae,be,ce);
+        fprintf(dataFile_func_E,"%f\t%f\n",xe,ye);
+    }
+    fclose(dataFile_func_E);
+
+    //输出图像
+    FILE *gnuplotPipe= popen("gnuplot -persist","w");
+    if(gnuplotPipe){
+        fprintf(gnuplotPipe,"set terminal wxt\n");
+        //fprintf(gnuplotPipe,"plot 'data.txt' with points,'data_r' with lines,'data_e' with lines\n");
+        fprintf(gnuplotPipe,"plot 'data.txt' with points\n");
+        fprintf(gnuplotPipe,"plot 'data_r' with lines\n,'data_e' with lines\n");
+        fflush(gnuplotPipe);
+        fprintf(gnuplotPipe, "exit\n");
+        pclose(gnuplotPipe);
+    }
+    else{
+        cerr<<"error with gnuplotPipe"<<endl;
+    }
+
     return 0;
 }

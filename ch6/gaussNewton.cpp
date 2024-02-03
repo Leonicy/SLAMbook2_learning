@@ -41,8 +41,8 @@ int main(int argc, char **argv) {
       J[1] = -xi * exp(ae * xi * xi + be * xi + ce);  // de/db
       J[2] = -exp(ae * xi * xi + be * xi + ce);  // de/dc
 
-      H += inv_sigma * inv_sigma * J * J.transpose();
-      b += -inv_sigma * inv_sigma * error * J;
+      H += inv_sigma * inv_sigma * J * J.transpose();//和自己写的不一样
+      b += -inv_sigma * inv_sigma * error * J;//和自己写的不一样
 
       cost += error * error;
     }
