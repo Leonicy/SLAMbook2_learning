@@ -15,18 +15,20 @@
 using namespace std;
 
 // 曲线模型的顶点，模板参数：优化变量维度和数据类型
+//优化变量(在这里是[a,b,c])为顶点Vertex;误差项为边Edge;这里只有一个优化变量,所以为一元边Unary Edge
 class CurveFittingVertex : public g2o::BaseVertex<3, Eigen::Vector3d> {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   // 重置
   virtual void setToOriginImpl() override {
-    _estimate << 0, 0, 0;
+      /*将顶点重置为000*/
+    _estimate << 0, 0, 0;//将顶点重置为000
   }
 
   // 更新
   virtual void oplusImpl(const double *update) override {
-    _estimate += Eigen::Vector3d(update);
+    _estimate += Eigen::Vector3d(update);//更新顶点值，传一个3*1的update数组
   }
 
   // 存盘和读盘：留空
@@ -42,18 +44,19 @@ public:
 
   CurveFittingEdge(double x) : BaseUnaryEdge(), _x(x) {}
 
-  // 计算曲线模型误差
-  virtual void computeError() override {
+  // 计算曲线模型误差，构建误差模型
+  virtual void computeError() override {//拟函数
     const CurveFittingVertex *v = static_cast<const CurveFittingVertex *> (_vertices[0]);
-    const Eigen::Vector3d abc = v->estimate();
+    const Eigen::Vector3d abc = v->estimate();//v - > estimate()
     _error(0, 0) = _measurement - std::exp(abc(0, 0) * _x * _x + abc(1, 0) * _x + abc(2, 0));
   }
 
-  // 计算雅可比矩阵
+  // 计算误差模型的雅可比矩阵
   virtual void linearizeOplus() override {
     const CurveFittingVertex *v = static_cast<const CurveFittingVertex *> (_vertices[0]);
     const Eigen::Vector3d abc = v->estimate();
     double y = exp(abc[0] * _x * _x + abc[1] * _x + abc[2]);
+    //误差模型的雅可比矩阵
     _jacobianOplusXi[0] = -_x * _x * y;
     _jacobianOplusXi[1] = -_x * y;
     _jacobianOplusXi[2] = -y;
@@ -87,7 +90,7 @@ int main(int argc, char **argv) {
   typedef g2o::LinearSolverDense<BlockSolverType::PoseMatrixType> LinearSolverType; // 线性求解器类型
 
   // 梯度下降方法，可以从GN, LM, DogLeg 中选
-  auto solver = new g2o::OptimizationAlgorithmGaussNewton(
+  auto solver = new g2o::OptimizationAlgorithmGaussNewton(//GN法
     make_unique<BlockSolverType>(make_unique<LinearSolverType>()));
   g2o::SparseOptimizer optimizer;     // 图模型
   optimizer.setAlgorithm(solver);   // 设置求解器

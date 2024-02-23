@@ -21,15 +21,16 @@ include_directories(${G2O_INCLUDE_DIRS})
 # Eigen
 include_directories("/usr/include/eigen3")
 
-#add_executable(gaussNewton gaussNewton.cpp)
-#target_link_libraries(gaussNewton ${OpenCV_LIBS})
+add_executable(gaussNewton gaussNewton.cpp)
+target_link_libraries(gaussNewton ${OpenCV_LIBS})
 
-#add_executable(ceresCurveFitting ceresCurveFitting.cpp)
-#target_link_libraries(ceresCurveFitting ${OpenCV_LIBS} ${CERES_LIBRARIES})
+add_executable(ceresCurveFitting ceresCurveFitting.cpp)
+target_link_libraries(ceresCurveFitting ${OpenCV_LIBS} ${CERES_LIBRARIES})
 
-#add_executable(g2oCurveFitting g2oCurveFitting.cpp
-#        g2oCurveFitting.cpp)
-#target_link_libraries(g2oCurveFitting ${OpenCV_LIBS} ${G2O_CORE_LIBRARY} ${G2O_STUFF_LIBRARY})
+add_executable(g2oCurveFitting g2oCurveFitting.cpp
+        g2oCurveFitting.cpp
+        g2oCurveFitting.cpp)
+target_link_libraries(g2oCurveFitting ${OpenCV_LIBS} ${G2O_CORE_LIBRARY} ${G2O_STUFF_LIBRARY})
 
 add_executable(gaussnewton_PRC gaussnewton_PRC.cpp)
 target_link_libraries(gaussnewton_PRC ${OpenCV_LIBS} ${G2O_CORE_LIBRARY} ${G2O_STUFF_LIBRARY})
